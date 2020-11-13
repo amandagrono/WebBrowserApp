@@ -12,10 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 
-public class ControlFragment extends Fragment {
+public class PageControlFragment extends Fragment {
 
 
-    public ControlFragment() {
+    public PageControlFragment() {
         // Required empty public constructor
     }
 
@@ -26,7 +26,7 @@ public class ControlFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View l = inflater.inflate(R.layout.fragment_control, container, false);
+        View l = inflater.inflate(R.layout.fragment_page_control, container, false);
 
         ImageButton goButton = l.findViewById(R.id.goButton);
         ImageButton backButton = l.findViewById(R.id.backButton);

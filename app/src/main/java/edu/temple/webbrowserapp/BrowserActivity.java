@@ -2,36 +2,42 @@ package edu.temple.webbrowserapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
-public class BrowserActivity extends AppCompatActivity implements ControlFragment.goButtonClick, PageViewFragment.setEditTextURL{
+public class BrowserActivity extends AppCompatActivity implements PageControlFragment.goButtonClick, PageViewFragment.setEditTextURL{
 
     PageViewFragment pvf;
-    ControlFragment cf;
+    PageControlFragment pcf;
+    BrowserControlFragment bcf;
+    PageListFragment plf;
+
+    int counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
 
-
-
         if(savedInstanceState != null){
+
+            plf = (PageListFragment) getSupportFragmentManager().getFragment(savedInstanceState, "plfFragment");
             pvf = (PageViewFragment) getSupportFragmentManager().getFragment(savedInstanceState, "pvfFragment");
-            cf = (ControlFragment) getSupportFragmentManager().getFragment(savedInstanceState, "cfFragment");
+            pcf = (PageControlFragment) getSupportFragmentManager().getFragment(savedInstanceState, "cfFragment");
         }
         else {
             pvf = new PageViewFragment();
-            cf = new ControlFragment();
-
+            pcf = new PageControlFragment();
+            bcf = new BrowserControlFragment();
+            plf = new PageListFragment();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.control_layout, cf)
-                    .add(R.id.pageLayout, pvf)
+                    .add(R.id.page_control, pcf)
+                    .add(R.id.page_display, pvf)
+                    .add(R.id.browser_control, bcf)
+                    .add(R.id.page_list, plf)
                     .addToBackStack(null)
                     .commit();
         }
@@ -52,13 +58,28 @@ public class BrowserActivity extends AppCompatActivity implements ControlFragmen
     }
     @Override
     public void setEditText(String url) {
-        cf.setEditTextURL(url);
+        pcf.setEditTextURL(url);
+    }
+
+    @Override
+    public void setListView(String title) {
+        if(counter == 0){
+            plf.addToList(title);
+            counter++;
+        }
+        else {
+            plf.changeList(counter - 1, title);
+        }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, "pvfFragment", pvf);
-        getSupportFragmentManager().putFragment(outState, "cfFragment", cf);
+        getSupportFragmentManager().putFragment(outState, "cfFragment", pcf);
+        getSupportFragmentManager().putFragment(outState, "plfFragment", plf);
+
     }
+
+
 }

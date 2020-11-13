@@ -1,24 +1,17 @@
 package edu.temple.webbrowserapp;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-
-import java.util.concurrent.TimeUnit;
 
 public class PageViewFragment extends Fragment{
 
@@ -33,7 +26,7 @@ public class PageViewFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View l = inflater.inflate(R.layout.fragment_page_view, container, false);
+        View l = inflater.inflate(R.layout.fragment_page_display, container, false);
 
         webView = l.findViewById(R.id.webView);
         webView.setWebViewClient(new MyBrowser());
@@ -59,6 +52,11 @@ public class PageViewFragment extends Fragment{
         if(savedInstanceState != null) {
             webView.restoreState(savedInstanceState);
         }
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        webView.onPause();
     }
 
     public void onAttach(@NonNull Context context){
@@ -100,14 +98,18 @@ public class PageViewFragment extends Fragment{
         webView.goForward();
 
     }
+
     interface setEditTextURL{
         void setEditText(String url);
+        void setListView(String title);
+
     }
 
     private class MyBrowser extends WebViewClient{
         @Override
         public void onPageFinished(WebView view, String url){
             parentActivity.setEditText(webView.getUrl());
+            parentActivity.setListView(webView.getTitle());
         }
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request){
