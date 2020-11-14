@@ -14,7 +14,7 @@ import android.widget.ImageButton;
 public class BrowserControlFragment extends Fragment {
 
 
-    View layout;
+    View l;
     ImageButton newTabButton;
 
     PageListFragment.PageListInterface parentActivity;
@@ -28,11 +28,11 @@ public class BrowserControlFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if(context instanceof BrowserControlFragment.ClickedNewTabButton){
+        if(context instanceof BrowserControlFragment.BrowserControlInterface){
             parentActivity = (PageListFragment.PageListInterface) context;
         }
         else{
-            throw new RuntimeException("implement ClickedNewTabButton");
+            throw new RuntimeException("implement BrowserControlInterface");
         }
     }
 
@@ -46,20 +46,20 @@ public class BrowserControlFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        layout = inflater.inflate(R.layout.fragment_browser_control, container, false);
+        l = inflater.inflate(R.layout.fragment_browser_control, container, false);
 
-        newTabButton = layout.findViewById(R.id.imageButton);
+        newTabButton = l.findViewById(R.id.imageButton);
         newTabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ClickedNewTabButton) getActivity()).newTab();
+                ((BrowserControlInterface) getActivity()).newTab();
             }
         });
 
-        return layout;
+        return l;
     }
 
-    interface ClickedNewTabButton{
+    interface BrowserControlInterface{
         void newTab();
     }
 }

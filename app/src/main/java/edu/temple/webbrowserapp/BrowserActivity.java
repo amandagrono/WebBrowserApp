@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public class BrowserActivity extends AppCompatActivity implements
         PageControlFragment.PageControlInterface,
-        PageViewFragment.updateURLInterface,
-        BrowserControlFragment.ClickedNewTabButton,
+        PageViewFragment.PageViewInterface,
+        BrowserControlFragment.BrowserControlInterface,
         PageListFragment.PageListInterface,
         PagerFragment.SwitchTab {
 
@@ -46,11 +46,11 @@ public class BrowserActivity extends AppCompatActivity implements
         }
 
         pcf = new PageControlFragment();
-
         bcf = new BrowserControlFragment();
         plf = new PageListFragment();
-
         fm = getSupportFragmentManager();
+
+        //find out if page_control has a saved instance, if not create a new one
 
         if(fm.findFragmentById(R.id.page_control) == null){
             fm.beginTransaction()
@@ -58,9 +58,11 @@ public class BrowserActivity extends AppCompatActivity implements
                     .addToBackStack(null)
                     .commit();
         }
-        else
-        { pcf = (PageControlFragment) getSupportFragmentManager().findFragmentById(R.id.page_control); }
+        else {
+            pcf = (PageControlFragment) getSupportFragmentManager().findFragmentById(R.id.page_control);
+        }
 
+        //find out if page_display has a saved instance, if not create a new one
         if(fm.findFragmentById(R.id.page_display) == null){
             pf = new PagerFragment();
             Bundle bundle = new Bundle();
@@ -75,6 +77,7 @@ public class BrowserActivity extends AppCompatActivity implements
         else
         {   pf = (PagerFragment) getSupportFragmentManager().findFragmentById(R.id.page_display); }
 
+        //find out if browser control has a saved instance, if not create a new one
         if(fm.findFragmentById(R.id.browser_control) == null){
             fm.beginTransaction()
                     .add(R.id.browser_control, bcf)
@@ -84,6 +87,7 @@ public class BrowserActivity extends AppCompatActivity implements
         else
         {   bcf = (BrowserControlFragment) getSupportFragmentManager().findFragmentById(R.id.browser_control); }
 
+        //find out if page_list has a saved instance, if not create a new one
         if( (findViewById(R.id.page_list) != null)){
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("listofpages",  tabs);
@@ -112,29 +116,29 @@ public class BrowserActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void sendURL(String url) {
+    public void pressedGo(String url) {
         FragmentStatePagerAdapter adapter = (FragmentStatePagerAdapter) pf.vp.getAdapter();
-        int whichFragmentIndex = pf.vp.getCurrentItem();
-        PageViewFragment currentpvf = (PageViewFragment) adapter.getItem(whichFragmentIndex);
-        currentpvf.pressedGo(url);
+        int whichIndex = pf.vp.getCurrentItem();
+        PageViewFragment currentPvf = (PageViewFragment) adapter.getItem(whichIndex);
+        currentPvf.pressedGo(url);
         adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void goBack() {
+    public void pressedBack() {
         FragmentStatePagerAdapter adapter = (FragmentStatePagerAdapter) pf.vp.getAdapter();
-        int whichFragmentIndex = pf.vp.getCurrentItem();
-        PageViewFragment currentpvf = (PageViewFragment) adapter.getItem(whichFragmentIndex);
-        currentpvf.pressedBack();
+        int whichIndex = pf.vp.getCurrentItem();
+        PageViewFragment currentPvf = (PageViewFragment) adapter.getItem(whichIndex);
+        currentPvf.pressedBack();
         adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void goForward() {
+    public void pressedForward() {
         FragmentStatePagerAdapter adapter = (FragmentStatePagerAdapter) pf.vp.getAdapter();
-        int whichFragmentIndex = pf.vp.getCurrentItem();
-        PageViewFragment currentpvf = (PageViewFragment) adapter.getItem(whichFragmentIndex);
-        currentpvf.pressedForward();
+        int whichIndex = pf.vp.getCurrentItem();
+        PageViewFragment currentPvf = (PageViewFragment) adapter.getItem(whichIndex);
+        currentPvf.pressedForward();
         adapter.notifyDataSetChanged();
     }
     @Override
@@ -161,8 +165,6 @@ public class BrowserActivity extends AppCompatActivity implements
 
     @Override
     public void switchTab(String url) {
-
-
         changeTitle();
     }
 

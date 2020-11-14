@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -66,9 +65,9 @@ public class PageListFragment extends Fragment {
             @NonNull
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                TextView tabName = new TextView(getContext());
-                tabName.setText(tabs.get(position).webView.getTitle());
-                return tabName;
+                TextView tab= new TextView(getContext());
+                tab.setText(tabs.get(position).webView.getTitle());
+                return tab;
             }
         };
         lv.setAdapter(adapter);

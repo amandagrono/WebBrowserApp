@@ -22,7 +22,7 @@ public class PageViewFragment extends Fragment implements Parcelable {
     View l;
     WebView webView;
 
-    updateURLInterface parentActivity;
+    PageViewInterface parentActivity;
 
     String Url;
 
@@ -57,13 +57,13 @@ public class PageViewFragment extends Fragment implements Parcelable {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if(context instanceof PageViewFragment.updateURLInterface)
+        if(context instanceof PageViewFragment.PageViewInterface)
         {
-            parentActivity = (PageViewFragment.updateURLInterface) context;
+            parentActivity = (PageViewFragment.PageViewInterface) context;
         }
         else
         {
-            throw new RuntimeException("You must implement updateURLInterface before attaching this fragment");
+            throw new RuntimeException("implement PageViewInterface");
         }
     }
 
@@ -141,7 +141,7 @@ public class PageViewFragment extends Fragment implements Parcelable {
         dest.writeString(Url);
     }
 
-    interface updateURLInterface{
+    interface PageViewInterface{
         void updateURL(String url);
     }
 }

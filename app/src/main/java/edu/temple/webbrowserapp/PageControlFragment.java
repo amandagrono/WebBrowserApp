@@ -17,10 +17,10 @@ public class PageControlFragment extends Fragment {
 
 
     View layout;
-    EditText myEditText;
+    EditText editText;
     ImageButton backButton;
     ImageButton nextButton;
-    ImageButton searchButton;
+    ImageButton goButton;
     PageControlInterface parentActivity;
 
     String url;
@@ -52,33 +52,33 @@ public class PageControlFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         layout = inflater.inflate(R.layout.fragment_page_control, container, false);
 
-        searchButton = layout.findViewById(R.id.goButton);
+        goButton = layout.findViewById(R.id.goButton);
         backButton = layout.findViewById(R.id.backButton);
         nextButton = layout.findViewById(R.id.forwardButton);
-        myEditText = layout.findViewById(R.id.editText);
+        editText = layout.findViewById(R.id.editText);
 
-        searchButton.setOnClickListener(new View.OnClickListener(){
+        goButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                url = myEditText.getText().toString();
-                ((PageControlInterface) getActivity()).sendURL(url);
+                url = editText.getText().toString();
+                ((PageControlInterface) getActivity()).pressedGo(url);
             }
         });
 
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                ((PageControlInterface) getActivity()).goBack();
+                ((PageControlInterface) getActivity()).pressedBack();
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                ((PageControlInterface) getActivity()).goForward();
+                ((PageControlInterface) getActivity()).pressedForward();
             }
         });
 
@@ -87,12 +87,12 @@ public class PageControlFragment extends Fragment {
 
     public void updateUrl(String url)
     {
-        myEditText.setText(url);
+        editText.setText(url);
     }
 
     interface PageControlInterface{
-        void sendURL(String url);
-        void goBack();
-        void goForward();
+        void pressedGo(String url);
+        void pressedBack();
+        void pressedForward();
     }
 }
