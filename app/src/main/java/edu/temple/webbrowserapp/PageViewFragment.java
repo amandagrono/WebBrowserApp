@@ -6,76 +6,93 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class PageViewFragment extends Fragment{
+
+
+public class PageViewFragment extends Fragment implements Parcelable {
+
+
+    View l;
+    WebView webView;
+
+    updateURLInterface parentActivity;
+
+    String Url;
 
     public PageViewFragment() {
         // Required empty public constructor
     }
 
-    WebView webView;
-    setEditTextURL parentActivity;
+    protected PageViewFragment(Parcel in) {
+        Url = in.readString();
+    }
+
+    public static final Creator<PageViewFragment> CREATOR = new Creator<PageViewFragment>() {
+        @Override
+        public PageViewFragment createFromParcel(Parcel in) {
+            return new PageViewFragment(in);
+        }
+
+        @Override
+        public PageViewFragment[] newArray(int size) {
+            return new PageViewFragment[size];
+        }
+    };
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        webView.saveState(outState);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if(context instanceof PageViewFragment.updateURLInterface)
+        {
+            parentActivity = (PageViewFragment.updateURLInterface) context;
+        }
+        else
+        {
+            throw new RuntimeException("You must implement updateURLInterface before attaching this fragment");
+        }
+    }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View l = inflater.inflate(R.layout.fragment_page_display, container, false);
-
+        l = inflater.inflate(R.layout.fragment_page_display, container, false);
         webView = l.findViewById(R.id.webView);
-        webView.setWebViewClient(new MyBrowser());
-        if(savedInstanceState == null) {
+
+        if(savedInstanceState != null)
+        {
+            webView.restoreState(savedInstanceState);
+        }
+        else {
             webView.loadUrl("https://google.com");
         }
-        else{
-            webView.restoreState(savedInstanceState);
-        }
+
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                parentActivity.updateURL(webView.getUrl());
+            }
+        });
 
         return l;
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putString("CurrentUrl", webView.getUrl());
-        webView.saveState(outState);
-    }
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null) {
-            webView.restoreState(savedInstanceState);
-        }
-    }
-    @Override
-    public void onPause(){
-        super.onPause();
-        webView.onPause();
-    }
-
-    public void onAttach(@NonNull Context context){
-
-        super.onAttach(context);
-        if(context instanceof PageViewFragment.setEditTextURL){
-            parentActivity = (setEditTextURL) context;
-        }
-        else{
-            throw new ClassCastException(context.toString() + "must implement setEditTextUrl");
-        }
-
-
-    }
-
-
-    public void goToURL(String url){
-        webView.loadUrl(checkURL(url));
-
     }
 
     private String checkURL(String url){
@@ -89,35 +106,42 @@ public class PageViewFragment extends Fragment{
             return "https://www." + url;
         }
     }
-    public void pressBack(){
-        webView.goBack();
 
-
-    }
-    public void pressForward(){
-        webView.goForward();
-
+    public void pressedGo(String url)
+    {
+        Url = url;
+        webView.loadUrl(checkURL(Url));
     }
 
-    interface setEditTextURL{
-        void setEditText(String url);
-        void setListView(String title);
+    public void pressedBack()
+    {
+        if(webView.canGoBack())
+        {
+           webView.goBack();
 
-    }
-
-    private class MyBrowser extends WebViewClient{
-        @Override
-        public void onPageFinished(WebView view, String url){
-            parentActivity.setEditText(webView.getUrl());
-            parentActivity.setListView(webView.getTitle());
-        }
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request){
-            webView.loadUrl(request.getUrl().toString());
-            return true;
         }
     }
 
+    public void pressedForward()
+    {
+        if(webView.canGoForward())
+        {
+            webView.goForward();
 
+        }
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Url);
+    }
+
+    interface updateURLInterface{
+        void updateURL(String url);
+    }
 }
