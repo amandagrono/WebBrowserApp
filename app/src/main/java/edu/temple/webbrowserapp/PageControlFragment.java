@@ -16,7 +16,7 @@ import android.widget.ImageButton;
 public class PageControlFragment extends Fragment {
 
 
-    View layout;
+    View l;
     EditText editText;
     ImageButton backButton;
     ImageButton nextButton;
@@ -53,12 +53,12 @@ public class PageControlFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        layout = inflater.inflate(R.layout.fragment_page_control, container, false);
+        l= inflater.inflate(R.layout.fragment_page_control, container, false);
 
-        goButton = layout.findViewById(R.id.goButton);
-        backButton = layout.findViewById(R.id.backButton);
-        nextButton = layout.findViewById(R.id.forwardButton);
-        editText = layout.findViewById(R.id.editText);
+        goButton = l.findViewById(R.id.goButton);
+        backButton = l.findViewById(R.id.backButton);
+        nextButton = l.findViewById(R.id.forwardButton);
+        editText = l.findViewById(R.id.editText);
 
         goButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -82,7 +82,7 @@ public class PageControlFragment extends Fragment {
             }
         });
 
-        return layout;
+        return l;
     }
 
     public void updateUrl(String url)
