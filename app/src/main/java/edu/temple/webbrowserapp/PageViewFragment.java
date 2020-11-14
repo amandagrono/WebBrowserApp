@@ -107,28 +107,17 @@ public class PageViewFragment extends Fragment implements Parcelable {
         }
     }
 
-    public void pressedGo(String url)
-    {
+    public void pressedGo(String url) {
         Url = url;
         webView.loadUrl(checkURL(Url));
     }
 
-    public void pressedBack()
-    {
-        if(webView.canGoBack())
-        {
-           webView.goBack();
-
-        }
+    public void pressedBack() {
+        webView.goBack();
     }
 
-    public void pressedForward()
-    {
-        if(webView.canGoForward())
-        {
-            webView.goForward();
-
-        }
+    public void pressedForward() {
+        webView.goForward();
     }
 
     @Override
