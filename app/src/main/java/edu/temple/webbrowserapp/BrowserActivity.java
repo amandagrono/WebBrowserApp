@@ -6,11 +6,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class BrowserActivity extends AppCompatActivity implements
         PageControlFragment.PageControlInterface,
@@ -25,6 +28,7 @@ public class BrowserActivity extends AppCompatActivity implements
     PagerFragment pf;
 
     ArrayList<PageViewFragment> tabs;
+    ArrayList<Bookmark> bookmarks;
 
     FragmentManager fm;
 
@@ -34,6 +38,7 @@ public class BrowserActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
+        bookmarks = new ArrayList<>();
 
         if(savedInstanceState == null)
         {
@@ -49,6 +54,9 @@ public class BrowserActivity extends AppCompatActivity implements
         bcf = new BrowserControlFragment();
         plf = new PageListFragment();
         fm = getSupportFragmentManager();
+
+        File file = getFilesDir();
+
 
         //find out if page_control has a saved instance, if not create a new one
 
@@ -156,16 +164,46 @@ public class BrowserActivity extends AppCompatActivity implements
     public void newTab() {
         tabs.add( new PageViewFragment());
 
-        pf.vp.getAdapter().notifyDataSetChanged();
+        Objects.requireNonNull(pf.vp.getAdapter()).notifyDataSetChanged();
         pf.vp.setCurrentItem(tabs.size() - 1);
 
     }
 
+    @Override
+    public void saveBookmark() {
+
+        Bookmark bookmark = new Bookmark(pf.pages.get(pf.vp.getCurrentItem()).Url, pf.pages.get(pf.vp.getCurrentItem()).webView.getTitle());
+
+        bookmarks.add(bookmark);
+    }
+
+    @Override
+    public void viewBookmarks() {
+        Intent intent = new Intent(this, BookmarkActivity.class);
+        intent.putExtra("BOOKMARKS", bookmarks);
+
+        startActivityForResult( intent , 2);
+    }
 
 
     @Override
     public void switchTab(String url) {
         changeTitle();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 2 ){
+            bookmarks = data.getParcelableArrayListExtra("RETURN_BOOKMARKS");
+        }
+        if(requestCode == 3){
+            bookmarks = data.getParcelableArrayListExtra("RETURN_BOOKMARKS");
+            Bookmark bookmark = (Bookmark) data.getSerializableExtra("BOOKMARKS");
+            String url = bookmark.getUrl();
+            pressedGo(url);
+        }
     }
 
     public void changeTitle()

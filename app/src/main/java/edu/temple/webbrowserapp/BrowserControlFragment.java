@@ -1,5 +1,6 @@
 package edu.temple.webbrowserapp;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,8 @@ public class BrowserControlFragment extends Fragment {
 
     View l;
     ImageButton newTabButton;
+    ImageButton viewBookMarkButton;
+    ImageButton saveButton;
 
     PageListFragment.PageListInterface parentActivity;
 
@@ -48,18 +51,37 @@ public class BrowserControlFragment extends Fragment {
         // Inflate the layout for this fragment
         l = inflater.inflate(R.layout.fragment_browser_control, container, false);
 
-        newTabButton = l.findViewById(R.id.imageButton);
+        newTabButton = l.findViewById(R.id.newTabButton);
+        viewBookMarkButton = l.findViewById(R.id.bookmarksButton);
+        saveButton = l.findViewById(R.id.saveButton);
+
+
         newTabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((BrowserControlInterface) getActivity()).newTab();
             }
         });
+        viewBookMarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BrowserControlInterface) getActivity()).viewBookmarks();
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BrowserControlInterface) getActivity()).saveBookmark();
+            }
+        });
+
 
         return l;
     }
 
     interface BrowserControlInterface{
         void newTab();
+        void saveBookmark();
+        void viewBookmarks();
     }
 }

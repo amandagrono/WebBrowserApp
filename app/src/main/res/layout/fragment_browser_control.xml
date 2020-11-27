@@ -8,18 +8,38 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
+        android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/newTabButton"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:src="@android:drawable/ic_input_add"
-        />
-   </LinearLayout>
+        android:contentDescription="@string/NewTab"
 
+        />
+
+    <ImageButton
+        android:id="@+id/saveButton"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@android:drawable/ic_menu_save"
+        android:contentDescription="@string/Save"
+        />
+
+    <ImageButton
+        android:id="@+id/bookmarksButton"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@android:drawable/sym_contact_card"
+        android:contentDescription="@string/Bookmarks"
+        />
+    </LinearLayout>
 
 </FrameLayout>
