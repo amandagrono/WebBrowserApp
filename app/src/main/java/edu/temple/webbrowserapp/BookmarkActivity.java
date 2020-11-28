@@ -3,6 +3,7 @@ package edu.temple.webbrowserapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -28,17 +29,28 @@ public class BookmarkActivity extends AppCompatActivity {
         listView.setAdapter(new BookmarkAdapter(list, getApplicationContext()));
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("RETURN_BOOKMARKS", list);
-        setResult(2, returnIntent);
+        Bundle bundle_back = new Bundle();
+        bundle_back.putParcelableArrayList("RETURN_BOOKMARKS", list);
+
+        returnIntent.putExtra("BUNDLE", bundle_back);
+
+        setResult(10, returnIntent);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent returnIntent_2 = new Intent();
                 Bookmark bookmark = list.get(position);
-                returnIntent_2.putExtra("BOOKMARK", bookmark);
-                returnIntent_2.putExtra("RETURN_BOOKMARKS", list);
-                setResult(3, returnIntent_2);
+
+                Log.d("message", bookmark.getTitle() + "   " + bookmark.getUrl());
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("BOOKMARK", bookmark);
+                bundle.putParcelableArrayList("RETURN_BOOKMARKS", list);
+
+                returnIntent_2.putExtra("BUNDLE", bundle);
+
+                setResult(11, returnIntent_2);
                 finish();
 
             }

@@ -3,6 +3,8 @@ package edu.temple.webbrowserapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 public class Bookmark implements Parcelable {
 
     private String url;

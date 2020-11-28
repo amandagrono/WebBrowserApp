@@ -7,7 +7,9 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 
@@ -22,6 +24,7 @@ public class BrowserActivity extends AppCompatActivity implements
         PageListFragment.PageListInterface,
         PagerFragment.SwitchTab {
 
+
     PageControlFragment pcf;
     BrowserControlFragment bcf;
     PageListFragment plf;
@@ -29,6 +32,8 @@ public class BrowserActivity extends AppCompatActivity implements
 
     ArrayList<PageViewFragment> tabs;
     ArrayList<Bookmark> bookmarks;
+
+    SharedPreferences sharedPreferences;
 
     FragmentManager fm;
 
@@ -38,6 +43,9 @@ public class BrowserActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
+
+        ;
+
         bookmarks = new ArrayList<>();
 
         if(savedInstanceState == null)
@@ -172,7 +180,9 @@ public class BrowserActivity extends AppCompatActivity implements
     @Override
     public void saveBookmark() {
 
-        Bookmark bookmark = new Bookmark(pf.pages.get(pf.vp.getCurrentItem()).Url, pf.pages.get(pf.vp.getCurrentItem()).webView.getTitle());
+        Bookmark bookmark = new Bookmark(pf.pages.get(pf.vp.getCurrentItem()).webView.getUrl(), pf.pages.get(pf.vp.getCurrentItem()).webView.getTitle());
+
+        Log.d("message", "URL in saveBookmark() is: " + bookmark.getUrl());
 
         bookmarks.add(bookmark);
     }
@@ -194,16 +204,20 @@ public class BrowserActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        Log.d("message", "Request Code: " + requestCode);
+        Log.d("message", "Result Code: " + resultCode);
+
+        Bundle bundle = new Bundle();
+        bundle = data.getBundleExtra("BUNDLE");
+
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 2 ){
-            bookmarks = data.getParcelableArrayListExtra("RETURN_BOOKMARKS");
-        }
-        if(requestCode == 3){
-            bookmarks = data.getParcelableArrayListExtra("RETURN_BOOKMARKS");
-            Bookmark bookmark = (Bookmark) data.getSerializableExtra("BOOKMARKS");
+        bookmarks = bundle.getParcelableArrayList("RETURN_BOOKMARKS");
+        if(resultCode == 11) {
+            Bookmark bookmark = (Bookmark) bundle.getParcelable("BOOKMARK");
             String url = bookmark.getUrl();
             pressedGo(url);
         }
+
     }
 
     public void changeTitle()
