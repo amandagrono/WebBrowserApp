@@ -3,6 +3,7 @@ package edu.temple.webbrowserapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,7 +120,9 @@ public class BookmarkActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Toast.makeText(BookmarkActivity.this, "Deleted: " + list.get(position).getTitle() + " Bookmark.", Toast.LENGTH_LONG).show();
+
                                     list.remove(position);
+                                    saveData();
                                     notifyDataSetChanged();
 
 
@@ -138,4 +143,13 @@ public class BookmarkActivity extends AppCompatActivity {
             return view;
         }
     }
+    public void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("bookmarks", json);
+        editor.apply();
+    }
+
 }

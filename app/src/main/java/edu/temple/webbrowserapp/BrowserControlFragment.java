@@ -24,6 +24,7 @@ public class BrowserControlFragment extends Fragment {
 
     public BrowserControlFragment() {
         // Required empty public constructor
+
     }
 
 
@@ -72,6 +73,7 @@ public class BrowserControlFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((BrowserControlInterface) getActivity()).saveBookmark();
+
             }
         });
 
@@ -80,6 +82,7 @@ public class BrowserControlFragment extends Fragment {
     }
 
     interface BrowserControlInterface{
+        void saveData();
         void newTab();
         void saveBookmark();
         void viewBookmarks();

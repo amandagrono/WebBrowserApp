@@ -6,16 +6,26 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
+
 
 public class BrowserActivity extends AppCompatActivity implements
         PageControlFragment.PageControlInterface,
@@ -33,20 +43,24 @@ public class BrowserActivity extends AppCompatActivity implements
     ArrayList<PageViewFragment> tabs;
     ArrayList<Bookmark> bookmarks;
 
-    SharedPreferences sharedPreferences;
+
+
 
     FragmentManager fm;
 
     int page = 0;
+
+    public static String filename = "bookmarks.ser";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
 
-        ;
 
-        bookmarks = new ArrayList<>();
+
+        loadData();
+
 
         if(savedInstanceState == null)
         {
@@ -119,6 +133,27 @@ public class BrowserActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(bookmarks);
+        editor.putString("bookmarks", json);
+        editor.apply();
+    }
+    public void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("bookmarks", null);
+        Type type = new TypeToken<ArrayList<Bookmark>>() {}.getType();
+        bookmarks = gson.fromJson(json, type);
+
+        if(bookmarks == null){
+            bookmarks = new ArrayList<>();
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outstate){
         super.onSaveInstanceState(outstate);
         outstate.putParcelableArrayList("tabs", tabs);
@@ -184,7 +219,10 @@ public class BrowserActivity extends AppCompatActivity implements
 
         Log.d("message", "URL in saveBookmark() is: " + bookmark.getUrl());
 
-        bookmarks.add(bookmark);
+        saveData();
+
+        if(!bookmarks.contains(bookmark))
+            bookmarks.add(bookmark);
     }
 
     @Override
@@ -206,6 +244,8 @@ public class BrowserActivity extends AppCompatActivity implements
 
         Log.d("message lol", "Request Code: " + requestCode);
         Log.d("message lol", "Result Code: " + resultCode);
+
+        saveData();
 
         Bundle bundle = new Bundle();
         bundle = data.getBundleExtra("BUNDLE");
@@ -241,4 +281,6 @@ public class BrowserActivity extends AppCompatActivity implements
         String newURL = currentpvf.webView.getUrl();
         pcf.updateUrl(newURL);
     }
+
+
 }

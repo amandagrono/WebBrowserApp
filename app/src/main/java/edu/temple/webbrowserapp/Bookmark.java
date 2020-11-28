@@ -3,9 +3,11 @@ package edu.temple.webbrowserapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 
-public class Bookmark implements Parcelable {
+public class Bookmark implements Parcelable, Serializable {
 
     private String url;
     private String title;
@@ -42,7 +44,23 @@ public class Bookmark implements Parcelable {
         }
     };
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        boolean retVal = false;
 
+        if(obj instanceof Bookmark){
+            retVal = ((Bookmark) obj).title.equals(title);
+        }
+
+        return retVal;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.title != null ? this.title.hashCode() : 0);
+        return hash;
+    }
 
     @Override
     public int describeContents() {
