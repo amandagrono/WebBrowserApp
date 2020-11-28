@@ -204,8 +204,8 @@ public class BrowserActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Log.d("message", "Request Code: " + requestCode);
-        Log.d("message", "Result Code: " + resultCode);
+        Log.d("message lol", "Request Code: " + requestCode);
+        Log.d("message lol", "Result Code: " + resultCode);
 
         Bundle bundle = new Bundle();
         bundle = data.getBundleExtra("BUNDLE");

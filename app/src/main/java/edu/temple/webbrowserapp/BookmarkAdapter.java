@@ -1,6 +1,7 @@
 package edu.temple.webbrowserapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 
@@ -37,7 +41,7 @@ public class BookmarkAdapter extends BaseAdapter implements ListAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         View view = convertView;
         if(view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -51,8 +55,30 @@ public class BookmarkAdapter extends BaseAdapter implements ListAdapter {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                list.remove(position);
-                notifyDataSetChanged();
+
+                AlertDialog alertDialog = new AlertDialog.Builder(convertView.getContext())
+                        .setTitle("Delete Bookmark")
+                        .setMessage("Confirm Deleting Bookmark")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(convertView.getContext(), "Deleted: " + list.get(position).getTitle() + " Bookmark.", Toast.LENGTH_LONG).show();
+                                list.remove(position);
+                                notifyDataSetChanged();
+
+
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(convertView.getContext(), "Bookmark Not Deleted.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setCancelable(false)
+                        .create();
+                alertDialog.show();
+
             }
         });
         return view;
