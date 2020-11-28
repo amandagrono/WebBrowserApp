@@ -50,7 +50,7 @@ public class BrowserActivity extends AppCompatActivity implements
 
     int page = 0;
 
-    public static String filename = "bookmarks.ser";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +132,7 @@ public class BrowserActivity extends AppCompatActivity implements
         {   plf = (PageListFragment) getSupportFragmentManager().findFragmentById(R.id.page_list); }
     }
 
-    @Override
+
     public void saveData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -219,10 +219,10 @@ public class BrowserActivity extends AppCompatActivity implements
 
         Log.d("message", "URL in saveBookmark() is: " + bookmark.getUrl());
 
-        saveData();
-
         if(!bookmarks.contains(bookmark))
             bookmarks.add(bookmark);
+
+        saveData();
     }
 
     @Override

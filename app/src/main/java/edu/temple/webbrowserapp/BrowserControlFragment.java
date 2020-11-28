@@ -82,7 +82,6 @@ public class BrowserControlFragment extends Fragment {
     }
 
     interface BrowserControlInterface{
-        void saveData();
         void newTab();
         void saveBookmark();
         void viewBookmarks();
