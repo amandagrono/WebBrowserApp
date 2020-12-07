@@ -9,9 +9,12 @@ import androidx.viewpager.widget.PagerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 
@@ -43,9 +46,6 @@ public class BrowserActivity extends AppCompatActivity implements
     ArrayList<PageViewFragment> tabs;
     ArrayList<Bookmark> bookmarks;
 
-
-
-
     FragmentManager fm;
 
     int page = 0;
@@ -57,10 +57,9 @@ public class BrowserActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
 
-
-
         loadData();
 
+        Log.d("intent", getIntent().getAction());
 
         if(savedInstanceState == null)
         {
@@ -80,6 +79,7 @@ public class BrowserActivity extends AppCompatActivity implements
         File file = getFilesDir();
 
 
+
         //find out if page_control has a saved instance, if not create a new one
 
         if(fm.findFragmentById(R.id.page_control) == null){
@@ -93,7 +93,7 @@ public class BrowserActivity extends AppCompatActivity implements
         }
 
         //find out if page_display has a saved instance, if not create a new one
-        if(fm.findFragmentById(R.id.page_display) == null){
+        if(fm.findFragmentById(R.id.page_display) == null && !getIntent().getAction().equals("android.intent.action.VIEW")){
             pf = new PagerFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("listofpages",  tabs);
@@ -103,6 +103,23 @@ public class BrowserActivity extends AppCompatActivity implements
                     .add(R.id.page_display, pf)
                     .addToBackStack(null)
                     .commit();
+        }
+        else if(getIntent().getAction().equals("android.intent.action.VIEW")){
+            pf = new PagerFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("listofpages", tabs);
+
+            Log.d("intent", "url is: " + getIntent().getData().toString());
+
+            bundle.putString("external url", getIntent().getData().toString());
+
+            pf.setArguments(bundle);
+
+            fm.beginTransaction()
+                    .add(R.id.page_display, pf)
+                    .addToBackStack(null)
+                    .commit();
+
         }
         else
         {   pf = (PagerFragment) getSupportFragmentManager().findFragmentById(R.id.page_display); }
@@ -130,6 +147,15 @@ public class BrowserActivity extends AppCompatActivity implements
         }
         else
         {   plf = (PageListFragment) getSupportFragmentManager().findFragmentById(R.id.page_list); }
+
+        if(getIntent().getAction().equals("android.intent.action.VIEW")){
+
+
+            Log.d("intent", "getIntent success");
+            String url = getIntent().getData().toString();
+
+
+        }
     }
 
 
@@ -164,6 +190,27 @@ public class BrowserActivity extends AppCompatActivity implements
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
         savedInstanceState.getParcelableArrayList("tabs");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        share();
+
+        return super.onOptionsItemSelected(item);
+    }
+    private void share(){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = pf.pages.get(pf.vp.getCurrentItem()).webView.getTitle() + "\n" + pf.pages.get(pf.vp.getCurrentItem()).webView.getUrl();
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Parcel;
@@ -20,7 +21,9 @@ public class PageViewFragment extends Fragment implements Parcelable {
 
 
     View l;
-    WebView webView;
+    public WebView webView;
+
+    String defaultURL = "https://www.google.com";
 
     PageViewInterface parentActivity;
 
@@ -32,6 +35,15 @@ public class PageViewFragment extends Fragment implements Parcelable {
 
     protected PageViewFragment(Parcel in) {
         Url = in.readString();
+    }
+
+
+    public static PageViewFragment newInstance(String url){
+        Bundle args = new Bundle();
+        args.putString("url", url);
+        PageViewFragment pageViewFragment = new PageViewFragment();
+        pageViewFragment.setArguments(args);
+        return pageViewFragment;
     }
 
     public static final Creator<PageViewFragment> CREATOR = new Creator<PageViewFragment>() {
@@ -67,7 +79,14 @@ public class PageViewFragment extends Fragment implements Parcelable {
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            defaultURL = getArguments().getString("url");
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,7 +100,7 @@ public class PageViewFragment extends Fragment implements Parcelable {
             webView.restoreState(savedInstanceState);
         }
         else {
-            webView.loadUrl("https://google.com");
+            webView.loadUrl(defaultURL);
         }
 
         webView.setWebViewClient(new WebViewClient(){

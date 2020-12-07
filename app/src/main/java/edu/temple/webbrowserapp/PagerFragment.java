@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class PagerFragment extends Fragment {
     ViewPager vp;
 
     ArrayList<PageViewFragment> pages;
+    String defaultUrl = "https://www.google.com";
 
     SwitchTab parentActivity;
 
@@ -38,6 +40,9 @@ public class PagerFragment extends Fragment {
         if(bundle != null){
             pages = bundle.getParcelableArrayList("listofpages");
         }
+        if(bundle.getString("external url") != null){
+            defaultUrl = bundle.getString("external url");
+        }
     }
 
     @Override
@@ -49,8 +54,11 @@ public class PagerFragment extends Fragment {
         vp = l.findViewById(R.id.viewpager);
 
         if(savedInstanceState == null){
-            pages.add(new PageViewFragment());
+            PageViewFragment pvf;
+            pvf = PageViewFragment.newInstance(defaultUrl);
+            pages.add(pvf);
         }
+
 
         vp.setAdapter(new FragmentStatePagerAdapter(getChildFragmentManager()) {
             @NonNull
